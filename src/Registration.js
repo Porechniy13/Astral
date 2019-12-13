@@ -18,10 +18,11 @@ class Registration extends React.Component {
     setLogin = () => {
         if(this.state.login !== " "){
             let temp = JSON.parse(localStorage.getItem("users"))
+            if(!temp){
+                temp = []
+            }                        
             let buffer = {"name": this.state.login, "buyList": []}
-            console.log(temp)
             temp.push(buffer)
-            localStorage.clear()
             localStorage.setItem("users", JSON.stringify(temp))
         } else {
             alert("Введите логин!")

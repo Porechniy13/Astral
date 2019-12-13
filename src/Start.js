@@ -1,10 +1,11 @@
-import React from 'react';
+import React from 'react'
 import Auth from './Auth' 
 import Content from './App'
-import Registration from './Registration';
-import {Route, BrowserRouter} from 'react-router-dom'
+import Registration from './Registration'
+import {Route, BrowserRouter } from 'react-router-dom'
 
-class Start extends React.Component {
+
+class Start extends React.Component {    
     render(){
         return( 
             <BrowserRouter>

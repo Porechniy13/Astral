@@ -44,7 +44,7 @@ class Auth extends React.Component {
             <AuthForm>
                 <Paper>
                     <h1 align='center'>Введите логин</h1>
-                    <Full><Input placeholder='Логин' required onChange={this.handleLogin}></Input></Full>
+                    <Full><Input placeholder='Логин' onChange={this.handleLogin}></Input></Full>
                     <Full>
                         <Link to='/registration'><Button>Добавить пользователя</Button></Link>                   
                         <Link to={`/id=${this.state.id}`}><Button onClick={this.checkUser} >Войти</Button></Link>

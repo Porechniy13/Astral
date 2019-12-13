@@ -1,31 +1,64 @@
 import React from 'react';
 import styled from 'styled-components';
-
+import Dialog from "@material-ui/core/Dialog";
+import {Input, Button} from "@material-ui/core";
 
 class Content extends React.Component {
 	constructor(props) {
 		super(props);
-		let { user_id } = props.match.params;
+		let { id: user_id } = props.match.params;
 		let temp = JSON.parse(localStorage.getItem("users"))
-		console.log(temp[user_id].name)
+		
 		this.state = {
 			id: user_id,
 			name: temp[user_id].name,
-			currentList: temp[user_id].buyList
+			currentList: temp[user_id].buyList,
+			open: false,
+			listName: " "
 		};		
 	}
 
-	createList = () => {
-		let Node = {
-			name: "name",
-			category: "category",
-			counter: 10
-		};
-		this.setState(prevState => ({
-			size: prevState.size + 1,
-			currentList: [...prevState.currentList, Node]
-		}));
-		localStorage.setItem('currentList', this.state.currentList);
+	newList = () => {
+		let temp = this.state.currentList
+		let bufferName = this.state.listName
+		
+		if(temp.map(function(item){if(item.name==bufferName){return -1}}) == -1){
+			alert('Такое название уже используется!')
+			return
+		} else {
+			temp.push({name: bufferName, list: []})
+			this.setState({
+				currentList: temp
+			})
+			this.handleClose()
+		}		
+	}
+
+	handleList = (event) => {
+		const temp = event.target.value
+		this.setState({
+			listName: temp
+		})
+	}
+
+    handleClose = () => {
+        this.setState({
+            open: false
+        });
+    }
+
+	openList = () => {
+		this.setState({
+			open: true
+		});
+	}
+
+	deleteList = () => {
+		let temp = this.state.currentList
+		console.log(temp.pop())
+		this.setState({
+			currentList: temp
+		})
 	}
 
 	render() {
@@ -35,13 +68,32 @@ class Content extends React.Component {
 				<Sidebar>
 					<Menu>
 						<Logo></Logo>
-						<MenuItem onClick={this.createList}><p>Добавить список</p></MenuItem>
+						<MenuItem onClick={this.openList}><p>Добавить список</p></MenuItem>
+						<Dialog
+							title="Dialog With Actions"								
+							open={this.state.open}							
+							>
+							<form>
+								<Input id="list-name" placeholder="Название списка" onChange={this.handleList}></Input>
+							</form>
+							<Button onClick={this.newList}>Добавить</Button>
+							<Button onClick={this.handleClose}>Закрыть</Button>						
+						</Dialog>
 						<MenuItem onClick={this.deleteList}><p>Удалить последний</p></MenuItem>
+						
 						<MenuItem></MenuItem>
 					</Menu>
 				</Sidebar>
 				<List>
-					
+					{this.state.currentList.map(function(item){
+						return(
+							<Note>
+								{item.name}
+							</Note>
+						)
+					})
+
+					}
 				</List>
 			</Wrapper>
 		)
@@ -77,8 +129,8 @@ const List = styled.div`
 	grid-row-start: 2;
 	grid-row-end: 10;
 	display: grid;
-	grid-template-columns: 1fr;
-	grid-auto-rows: 5vh;
+	grid-template-columns: repeat(3, 1fr);
+	grid-auto-rows: 20vh;
 	grid-column-gap: 1vh;
 	grid-row-gap: 1vh;
 	background: #EEEEEE;
@@ -91,6 +143,10 @@ const Note = styled.div`
 	background: #CCCCCC;
 	border-radius: 1vh;
 	padding: 1vh;
+	:hover {
+		cursor: pointer;
+		background: aqua;
+	}
 `;
 
 const Menu = styled.div`
