@@ -21,8 +21,15 @@ class Content extends React.Component {
 	newList = () => {
 		let temp = this.state.currentList
 		let bufferName = this.state.listName
+
+		let check = temp.map(function(item){
+			if(item.name == bufferName){
+				return -1
+			} 
+		})
+
 		
-		if(temp.map(function(item){if(item.name==bufferName){return -1}}) == -1){
+		if(check == -1){
 			alert('Такое название уже используется!')
 			return
 		} else {
@@ -87,9 +94,11 @@ class Content extends React.Component {
 				<List>
 					{this.state.currentList.map(function(item){
 						return(
-							<Note>
-								{item.name}
-							</Note>
+							<Link to={`/id=${this.state.id}/${}`}> #Сюда добавить передачу индекса
+								<Note>								
+									{item.name}
+								</Note>
+							</Link>
 						)
 					})
 

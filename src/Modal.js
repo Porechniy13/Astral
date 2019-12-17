@@ -1,12 +1,19 @@
 import React from 'react';
 import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import { Paper, Input, Modal } from '@material-ui/core';
+import { Paper, Input } from '@material-ui/core';
 
-class Scenary extends React.Component{
+class BuyList extends React.Component{
+    constructor(props){
+        super(props)
+        let { id: uid, listId: lid } = props.match.params
+        let temp = JSON.parse(localStorage.getItem("users"))
+
+        this.state = {
+			id: uid,
+			listId: lid,
+			currentList: temp[uid].buyList[lid]
+		};		
+    }
     render(){
         return(
             <Dialog>
@@ -20,4 +27,4 @@ class Scenary extends React.Component{
     }
 }
 
-export default Scenary;
+export default BuyList;
