@@ -1,13 +1,21 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Paper, Input, Button } from '@material-ui/core';
-import { Link } from 'react-router-dom';
 
 class Auth extends React.Component {
-    state = {
-        login: '',
-        id: 0,
-        access: false
+    constructor(props) {
+        super(props)
+        let check = JSON.parse(localStorage.getItem("buyLists"))
+        if(check == undefined){
+            localStorage.setItem("buyLists", JSON.stringify([]))
+        }
+        check = JSON.parse(localStorage.getItem("users"))
+        if(check == undefined){
+            localStorage.setItem("users", JSON.stringify([]))
+        }
+        this.state = {
+            login: ''
+        }
     }
 
     handleLogin = event => {
@@ -17,22 +25,24 @@ class Auth extends React.Component {
         })
     }
 
+    goToRegistration = event => {
+        this.props.history.push('/registration')
+    }
+
     checkUser = () => {
         let buffer = JSON.parse(localStorage.getItem("users"))
         let check = false
         let index = 0
         for(let i=0; i < buffer.length; i++) {
-            if (buffer[i].name === this.state.login) {
+            if (buffer[i] == this.state.login) {
                 check = true
                 index = i
                 break
             }
         }
         if(check){
-            this.setState({
-                id: index,
-                access: true
-            })
+            let path = '/id='+index
+            this.props.history.push(path)
         }
         else{
             alert("Неверный логин! Зарегистрируйтесь!")
@@ -46,8 +56,8 @@ class Auth extends React.Component {
                     <h1 align='center'>Введите логин</h1>
                     <Full><Input placeholder='Логин' onChange={this.handleLogin}></Input></Full>
                     <Full>
-                        <Link to='/registration'><Button>Добавить пользователя</Button></Link>                   
-                        <Link to={`/id=${this.state.id}`}><Button onClick={this.checkUser} >Войти</Button></Link>
+                        <Button onClick={this.goToRegistration}>Добавить пользователя</Button>                  
+                        <Button onClick={this.checkUser} >Войти</Button>
                     </Full>
                 </Paper>
             </AuthForm>

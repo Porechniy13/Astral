@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Paper, Input, Button } from '@material-ui/core';
-import { Link } from 'react-router-dom';
 
 class Registration extends React.Component { 
     state = {
@@ -18,12 +17,19 @@ class Registration extends React.Component {
     setLogin = () => {
         if(this.state.login !== " "){
             let temp = JSON.parse(localStorage.getItem("users"))
-            if(!temp){
-                temp = []
-            }                        
-            let buffer = {"name": this.state.login, "buyList": []}
-            temp.push(buffer)
-            localStorage.setItem("users", JSON.stringify(temp))
+            let check = true
+            for(let i = 0; i < temp.length; i++){
+                if (temp[i] == this.state.login) {
+                    alert('Логин занят! Введите другой.')
+                    check = false
+                    break
+                }
+            }
+            if(check){
+                temp.push(this.state.login)
+                localStorage.setItem("users", JSON.stringify(temp))
+                this.props.history.push('/')
+            }            
         } else {
             alert("Введите логин!")
         }
@@ -35,7 +41,7 @@ class Registration extends React.Component {
                 <Paper>
                     <Input placeholder='Введите Ваш логин' onChange={this.handleLogin}></Input>
                     <br></br>
-                    <Link to='/'><Button onClick={this.setLogin}>Создать пользователя</Button></Link>
+                    <Button onClick={this.setLogin}>Создать пользователя</Button>
                 </Paper>
             </AuthForm>
         )

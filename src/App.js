@@ -6,41 +6,40 @@ import {Input, Button} from "@material-ui/core";
 class Content extends React.Component {
 	constructor(props) {
 		super(props);
-		let { id: user_id } = props.match.params;
+		let { id: userId } = props.match.params;
 		let temp = JSON.parse(localStorage.getItem("users"))
+		let userName = temp[userId]
+		let lists = JSON.parse(localStorage.getItem("buyLists"))
+		let buyLists = []
+		lists.map(function(item){
+			if(item.id == String(userId)){
+				buyLists.push(item)
+			}
+		})
 		
 		this.state = {
-			id: user_id,
-			name: temp[user_id].name,
-			currentList: temp[user_id].buyList,
+			id: userId,
+			name: userName,
 			open: false,
+			userList: buyLists,
 			listName: " "
 		};		
 	}
 
 	newList = () => {
-		let temp = this.state.currentList
+		let temp = this.state.userList
+		let glob = JSON.parse(localStorage.getItem("buyLists"))
 		let bufferName = this.state.listName
 
-		let check = temp.map(function(item){
-			if(item.name == bufferName){
-				return -1
-			} 
+		temp.push({id: this.state.id, name: bufferName, list: []})
+		glob.push({id: this.state.id, name: bufferName, list: []})
+		this.setState({
+			userList: temp
 		})
-
-		
-		if(check == -1){
-			alert('Такое название уже используется!')
-			return
-		} else {
-			temp.push({name: bufferName, list: []})
-			this.setState({
-				currentList: temp
-			})
-			this.handleClose()
-		}		
-	}
-
+		localStorage.setItem("buyLists", JSON.stringify(glob))
+		this.handleClose()
+	}		
+	
 	handleList = (event) => {
 		const temp = event.target.value
 		this.setState({
@@ -68,10 +67,17 @@ class Content extends React.Component {
 		})
 	}
 
+	goToList = (event) => {
+		const path = '/id='+this.state.id+'/'+event.target.id
+		this.props.history.push(path)
+	}
+
 	render() {
+		const userId = this.state.id
+		const goList = this.goToList
 		return (
 			<Wrapper>
-				<Header></Header>
+				<Header><h3>Добро пожаловать, {this.state.name}!</h3></Header>
 				<Sidebar>
 					<Menu>
 						<Logo></Logo>
@@ -85,24 +91,18 @@ class Content extends React.Component {
 							</form>
 							<Button onClick={this.newList}>Добавить</Button>
 							<Button onClick={this.handleClose}>Закрыть</Button>						
-						</Dialog>
-						<MenuItem onClick={this.deleteList}><p>Удалить последний</p></MenuItem>
+						</Dialog>							
 						
-						<MenuItem></MenuItem>
 					</Menu>
 				</Sidebar>
 				<List>
-					{this.state.currentList.map(function(item){
-						return(
-							<Link to={`/id=${this.state.id}/${}`}> #Сюда добавить передачу индекса
-								<Note>								
-									{item.name}
-								</Note>
-							</Link>
+					{this.state.userList.map(function(item){
+						return (
+							<Note onClick={goList} id={item.name}>
+								<p>{item.name}</p>
+							</Note>							
 						)
-					})
-
-					}
+					})}
 				</List>
 			</Wrapper>
 		)
@@ -125,6 +125,7 @@ const Header = styled.div`
 	grid-column-end: 4;	
 	background: #EEEEEE;
 	border-radius: 1vh;
+	text-align: center;
 `;
 
 const Sidebar = styled.div`
